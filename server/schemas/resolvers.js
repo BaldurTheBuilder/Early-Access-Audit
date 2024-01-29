@@ -1,5 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { User, Project } = require("../models");
+const { User, Game } = require("../models");
 // maybe change auth.js to index.js for simple imports
 // const { signToken } = require('../auth/auth');
 
