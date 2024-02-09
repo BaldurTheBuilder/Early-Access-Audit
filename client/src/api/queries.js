@@ -1,16 +1,20 @@
 import { gql } from "@apollo/client";
 
 export const QUERY_PROJECTS = gql`
-  query projects {
-    projects {
+  query games {
+    games {
       _id
-      projectTitle
-      briefDescription
-      detailedDescription
-      techUsed
-      repoLink
-      liveLink
-      image
+      gameTitle
+      appId
+      originalRelease
+      updatedRelease
+      lastUpdate
+      developer
+      publisher
+      totalFunding
+      earlyAccessFunding
+      earlyAccessCurrent
+      earlyAccessEver
     }
   }
 `;

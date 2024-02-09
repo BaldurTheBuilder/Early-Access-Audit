@@ -8,15 +8,16 @@ const gameSchema = new Schema({
   },
   appId: {
     type: Number,
-    required: "We need to know the game's ID to see if it's already been queried.",
-    unique: true
+    required:
+      "We need to know the game's ID to see if it's already been queried.",
+    unique: true,
   },
   originalRelease: {
     type: Date,
-    // default: Date.now,
+    default: Date.now,
   },
   updatedRelease: {
-    type: Date
+    type: Date,
   },
   lastUpdate: {
     type: Date,
@@ -28,17 +29,17 @@ const gameSchema = new Schema({
   publisher: {
     type: String,
   },
-  totalFunding:  {
-    type: Number
+  totalFunding: {
+    type: Number,
   },
-  earlyAccessFunding:  {
-    type: Number
+  earlyAccessFunding: {
+    type: Number,
   },
   earlyAccessCurrent: {
-    type: Boolean
+    type: Boolean,
   },
   earlyAccessEver: {
-    type: Boolean
+    type: Boolean,
   }
 });
 

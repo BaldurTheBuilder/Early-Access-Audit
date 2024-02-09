@@ -1,11 +1,14 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { User, Game } = require("../models");
 // maybe change auth.js to index.js for simple imports
-// const { signToken } = require('../auth/auth');
+const { signToken } = require('../auth/auth');
 
 
 const resolvers = {
   Query: {
+    games: async () => {
+      return Game.find();
+    },
     // users: async () => {
     //   return User.find()
     //   .populate('createdTasks')
@@ -20,25 +23,23 @@ const resolvers = {
     //   .populate('watchedTasks')
     //   .populate('fundedTasks');
     // },
-    projects: async () => {
-      return Project.find();
-    },
+
     // unclaimedTasks: async () => {
     //   const params = {assignedUser: null};
     //   return Task.find(params);
     // },
   },
-  Mutation: {
+  // Mutation: {
     //not using context to check whether we're logged in yet
-    updateImage: async (parent, {projectTitle, image}) => {
-      return await Project.findOneAndUpdate(
-        {projectTitle: projectTitle},
-        {image},
-        {new: true}
-        );
+    // updateImage: async (parent, {gameTitle, image}) => {
+    //   return await Project.findOneAndUpdate(
+    //     {projectTitle: projectTitle},
+    //     {image},
+    //     {new: true}
+    //     );
 
 
-      }
+    //   }
   //   addUser: async (parent, { username, email, password, firstName }) => {
   //     const user = await User.create({ username, email, password, firstName });
   //     const token = signToken(user);
@@ -77,7 +78,7 @@ const resolvers = {
   //       return task;
   //     }
   //   }
-  },
+  // },
 };
 
 module.exports = resolvers;

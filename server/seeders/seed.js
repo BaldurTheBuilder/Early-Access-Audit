@@ -12,19 +12,19 @@
 require('dotenv').config();
 const db = require("../config/connection");
 
-const { User, Project } = require("../models");
+const { User, Game } = require("../models");
 
 // const userSeeds = require('./userSeeds.json');
-const projectSeeds = require('./projectSeeds.json');
+const gameSeeds = require('./gameSeeds.json');
 db.once('open', async () => {
     try{
         // await User.deleteMany({});
-        await Project.deleteMany({});
+        await Game.deleteMany({});
         // await User.create(userSeeds);
 
-        for (let index = 0; index < projectSeeds.length; index++) {
+        for (let index = 0; index < gameSeeds.length; index++) {
             // const { _id, projectTitle, briefDescription, detailedDescription, techUsed, repoLink, liveLink } = 
-            await Project.create(projectSeeds[index]);
+            await Game.create(gameSeeds[index]);
 
             // update authoring user's list of created tasks
             // const authors = await User.findOneAndUpdate(
