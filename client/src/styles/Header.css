@@ -1,0 +1,20 @@
+/*
+our color pallete in hex is:
+668586
+82AEB1
+93C6D6
+A7ACD9
+9E8FB2
+*/
+
+.header {
+    background: #668586;
+  }
+  
+  .header h3 {
+    margin: 0;
+    padding-top: 25px;
+    text-align: left;
+    color: white;
+  }
+  

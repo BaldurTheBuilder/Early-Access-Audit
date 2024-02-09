@@ -1,0 +1,17 @@
+/*
+our color pallete in hex is:
+668586
+82AEB1
+93C6D6
+A7ACD9
+9E8FB2
+*/
+
+.footer {
+    background: #82AEB1;
+    width: 100%;
+    padding: 2px;
+  }
+  .footer a {
+    color: black
+  }
