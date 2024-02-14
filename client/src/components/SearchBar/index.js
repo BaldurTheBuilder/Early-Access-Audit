@@ -16,7 +16,6 @@ const SearchBar = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleSearch(search);
-    alert(`button was pushed! The search value was: ${search}!`);
   }
 
 
