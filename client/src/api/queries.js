@@ -18,3 +18,12 @@ export const QUERY_GAMES = gql`
     }
   }
 `;
+
+export const QUERY_SINGLE_GAME = gql`
+  query singleGame($steam_appid: Int!) {
+    singleGame(steam_appid: $steam_appid) {
+      name
+      steam_appid
+    }
+  }
+`;

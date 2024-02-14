@@ -1,23 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from "react";
+import { useQuery } from "@apollo/client";
 
-import '../../styles/Header.css';
+import { QUERY_SINGLE_GAME, QUERY_GAMES } from "../../api/queries";
+
 
 const GameInformation = () => {
-    return (
-    <header className="header">
-        <div className="container">
-            <div className="row">
-                <div className="col-lg-6 col-sm-12 ">
-                    {/*WHEN I view the header I see the developer's name and navigation with titles corresponding to different sections of the portfolio */}
-                    <h3>Search results go here</h3>
-                </div>
+    // use context a la 3rd-project-boot-campers to identify where this is. This is how we will grab the game id being searched.
+    // const [state] = currentContext();
+    // const appId = state.appId;
 
-                <div className="col-lg-6 col-sm-12">
-                </div>
-            </div>
-        </div>
-    </header>
-    );
-  };
-  
-  export default GameInformation;
+  const GameQuery = useQuery(QUERY_SINGLE_GAME, {
+    variables: {steam_appid: 1158940}
+  });
+  const GameData = GameQuery.data;
+
+
+  return (
+    <div>
+      <h3>Search results go here</h3>
+      <span className="text-primary">
+        Stored in state variable <code>{JSON.stringify(GameData)}</code>
+      </span>
+
+    </div>
+  );
+};
+
+export default GameInformation;

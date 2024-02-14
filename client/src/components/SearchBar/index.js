@@ -1,51 +1,50 @@
 import React, { useState } from "react";
+import {useGameSearchContext} from '../../context/GlobalState';
 
 // import '../../styles/Header.css';
 
-function SearchBar() {
+
+
+const SearchBar = () => {
+  const {handleSearch} = useGameSearchContext();
   const [search, setSearch] = useState("");
 
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value);
+  const handleChange = (e) => {
+    setSearch(e.target.value);
   };
 
-  const handleSubmit = (event) => {
-    alert(`you submitted the form.\n
-        Your search was: ${search}.`);
-    event.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleSearch(search);
+    alert(`button was pushed! The search value was: ${search}!`);
+  }
 
-    // Simulate form submission by clearing input fields
-    setSearch("");
-  };
+
 
   return (
-    <header className="header">
-      <div className="container">
-        <div className="row">
-          <div className="col-lg-6 col-sm-12 ">
-            <h3>Search bar goes here</h3>
+    <>
+      <h1>Early Access Searcher</h1>
+      <span className="text-primary">
+        Retrieve information for a given early access game.
+      </span>
+      <hr></hr>
+      <div className="form-group">
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="field">
+            <label style={{ marginRight: '5px' }}>Retrieve GitHub Issues</label>
+            <input
+              type="text"
+              value={search}
+              onChange={handleChange}
+              placeholder="1158940"
+            />
+            <button className="btn" type="submit" style={{ margin: '5px' }}>
+              Search
+            </button>
           </div>
-
-          <div className="col-lg-6 col-sm-12">
-            <form onSubmit={handleSubmit}>
-              <label>
-                Search
-                <br />
-                <input
-                  type="text"
-                  value={search}
-                  onChange={handleSearchChange}
-                />
-              </label>
-              <br />
-              <button type="submit" style={{ marginTop: 16 }}>
-                Submit
-              </button>
-            </form>
-          </div>
-        </div>
+        </form>
       </div>
-    </header>
+    </>
   );
 }
 
