@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const QUERY_PROJECTS = gql`
+export const QUERY_GAMES = gql`
   query games {
     games {
       _id
@@ -15,6 +15,15 @@ export const QUERY_PROJECTS = gql`
       earlyAccessFunding
       earlyAccessCurrent
       earlyAccessEver
+    }
+  }
+`;
+
+export const QUERY_SINGLE_GAME = gql`
+  query singleGame($steam_appid: Int!) {
+    singleGame(steam_appid: $steam_appid) {
+      name
+      steam_appid
     }
   }
 `;

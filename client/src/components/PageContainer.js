@@ -8,22 +8,23 @@ import Footer from "./Footer";
 import Home from "../pages/Home";
 
 const PageContainer = () => {
-    const [currentPage, setCurrentPage] = useState('#');
-    const handlePageChange = (page) => setCurrentPage(page);
+    // const [currentPage, setCurrentPage] = useState('#');
+    // const handlePageChange = (page) => setCurrentPage(page);
 
     // this is where we build the current page.
-    const renderPage = () => {
-        switch(currentPage) {
-            case "Home": return <Home/>;
-            default: return <Home/>;
-        };
-     };
+    // const renderPage = () => {
+    //     switch(currentPage) {
+    //         case "Home": return <Home/>;
+    //         default: return <Home/>;
+    //     };
+    //  };
     
   return ( 
   <div> 
-    <AlternateHeader currentPage={currentPage} handlePageChange={handlePageChange}/>
+    {/*<AlternateHeader currentPage={currentPage} handlePageChange={handlePageChange}/>
     {renderPage()}
-    <Footer/>
+  <Footer/>*/}
+  <Home/>
   </div>
   );
 };

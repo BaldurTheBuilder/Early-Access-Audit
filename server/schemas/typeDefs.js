@@ -14,13 +14,17 @@ const typeDefs = gql`
     appId: Int
     totalFunding: Int
     earlyAccessFunding: Int
-
   }
+  type SteamGame {
+    name: String
+    steam_appid: Int
+  }
+
   type Query {
     # users: [User]!
     games: [Game]!
     # unclaimedTasks: [Task]
-    # game(appId: String!): [Game]!
+    singleGame(steam_appid: Int!): SteamGame
   }
 
   # type Auth {
