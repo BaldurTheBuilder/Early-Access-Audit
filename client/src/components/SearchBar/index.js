@@ -22,7 +22,7 @@ const SearchBar = () => {
 
   return (
     <>
-      <h1>Early Access Searcher</h1>
+      <h1>Search Bar</h1>
       <span className="text-primary">
         Retrieve information for a given early access game.
       </span>
