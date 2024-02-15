@@ -18,28 +18,20 @@ const typeDefs = gql`
   type SteamGame {
     name: String
     steam_appid: Int
+    developer: String
+    publisher: String
+    isEarlyAccess: Boolean
+    release_date: String
   }
 
   type Query {
-    # users: [User]!
     games: [Game]!
-    # unclaimedTasks: [Task]
     singleGame(steam_appid: Int!): SteamGame
   }
-
-  # type Auth {
-  #   token: ID!
-  #   user: User
-  # }
 
   # type Mutation {
   #   addGame(appId: String!, ): Game
   #   updateGame(): Game
-
-  #   updateImage(projectTitle: String!, image: String!): Project
-  #   # addUser(username: String!, email: String!, password: String!, firstName: String!): Auth
-  #   # login(email: String!, password: String!): Auth
-  #   # addTask(taskName: String!, description: String!): Task
   # }
 `;
 

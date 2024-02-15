@@ -24,6 +24,10 @@ export const QUERY_SINGLE_GAME = gql`
     singleGame(steam_appid: $steam_appid) {
       name
       steam_appid
+      developer
+      publisher
+      isEarlyAccess
+      release_date
     }
   }
 `;

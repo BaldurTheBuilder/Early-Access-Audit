@@ -8,12 +8,11 @@ import { QUERY_SINGLE_GAME, QUERY_GAMES } from "../../api/queries";
 
 const GameInformation = () => {
   const {gameId} = useGameSearchContext();
-
   const GameQuery = useQuery(QUERY_SINGLE_GAME, {
     variables: {steam_appid: gameId}
   });
   const GameData = GameQuery.data;
-console.log(`-------------------gameId is: ${gameId}---------------------`);
+console.log(`------gameId is: ${gameId}----`);
 
   return (
     <div>

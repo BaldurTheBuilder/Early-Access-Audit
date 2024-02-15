@@ -10,13 +10,27 @@ const resolvers = {
       return Game.find();
     },
     singleGame: async (parent, { steam_appid }) => {
+      if(steam_appid === "") return {};
+
       const response = await axios.get(`https://store.steampowered.com/api/appdetails?appids=${steam_appid}`);
       if(!response.data[steam_appid].success) return 0;
-      
       const gameData = response.data[steam_appid].data;
+
+      let isEarlyAccess = false;
+      for (let index = 0; index < gameData.genres.length; index++) {
+        if(gameData.genres[index].description == "Early Access") {
+          isEarlyAccess = true;
+          break;
+        }
+      }
+      
       return {
         name: gameData.name,
-        steam_appid: gameData.steam_appid
+        steam_appid: gameData.steam_appid,
+        developer: gameData.developers[0],
+        publisher: gameData.publishers[0],
+        isEarlyAccess: isEarlyAccess,
+        release_date: gameData.release_date.date
       };
       // let ourGame = Game.find({ steam_appid: steam_appid });
       // if(ourGame) return ourGame;
@@ -46,70 +60,7 @@ const resolvers = {
         // return FetchSteam();
       // }
     },
-
-    // users: async () => {
-    //   return User.find()
-    //   .populate('createdTasks')
-    // },
-    // user: async (parent, {userId}) => {
-    //   return User.find({_id: userId})
-    //   .populate('createdTasks')
-    // },
-
-    // unclaimedTasks: async () => {
-    //   const params = {assignedUser: null};
-    //   return Task.find(params);
-    // },
   },
-  // Mutation: {
-  //not using context to check whether we're logged in yet
-  // updateImage: async (parent, {gameTitle, image}) => {
-  //   return await Project.findOneAndUpdate(
-  //     {projectTitle: projectTitle},
-  //     {image},
-  //     {new: true}
-  //     );
-
-  //   }
-  //   addUser: async (parent, { username, email, password, firstName }) => {
-  //     const user = await User.create({ username, email, password, firstName });
-  //     const token = signToken(user);
-  //     return { token, user };
-  //   },
-  //   login: async (parent, { email, password }) => {
-  //     const user = await User.findOne({ email });
-
-  //     if (!user) {
-  //       throw new AuthenticationError('No user found with this email address');
-  //     }
-
-  //     const correctPw = await user.isCorrectPassword(password);
-
-  //     if (!correctPw) {
-  //       throw new AuthenticationError('Incorrect credentials');
-  //     }
-
-  //     const token = signToken(user);
-
-  //     return { token, user };
-  //   },
-  //   addTask: async (parent, { taskName, description }, context) => {
-  //     if(context.user) {
-  //       const task = await Task.create({
-  //         taskName,
-  //         description,
-  //         taskAuthor: context.user.username
-  //       });
-
-  //       await User.findOneAndUpdated(
-  //         { _id: context.user._id },
-  //         { $pull: { createdTasks: task._id }}
-  //       );
-
-  //       return task;
-  //     }
-  //   }
-  // },
 };
 
 module.exports = resolvers;
