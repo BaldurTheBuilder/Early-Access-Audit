@@ -1,44 +1,42 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useQuery } from "@apollo/client";
+import "../../styles/dark-theme.css"
 
 import { useGameSearchContext } from "../../context/GlobalState";
 
 import { QUERY_SINGLE_GAME, QUERY_GAMES } from "../../api/queries";
 
 function timeSince(date) {
-
   let seconds = Math.floor((new Date() - date) / 1000);
   if (seconds < 86400) return "Less than a day!";
 
-  let ourString = "Approximately ";
+  let ourString = "";
   let months = false;
   let years = false;
 
   let interval = seconds / 31536000;
   if (interval >= 1) {
-    ourString+= Math.floor(interval) + " years";
+    ourString += Math.floor(interval) + " years";
     years = true;
   }
 
-  seconds = seconds - (Math.floor(interval) * 31536000);
+  seconds = seconds - Math.floor(interval) * 31536000;
   interval = seconds / 2592000;
   if (interval >= 1) {
-    if(years) ourString += ", ";
+    if (years) ourString += ", ";
     ourString += Math.floor(interval) + " months";
     months = true;
   }
 
-  seconds = seconds - (Math.floor(interval) * 2592000);
+  seconds = seconds - Math.floor(interval) * 2592000;
   interval = seconds / 86400;
   if (interval >= 1) {
-    if(months) ourString += ", ";
+    if (years || months) ourString += ", ";
     ourString += Math.floor(interval) + " days.";
   }
-  
 
-return ourString;
+  return ourString;
 }
-
 
 const GameInformation = () => {
   // gather the game ID from the search bar
@@ -54,24 +52,38 @@ const GameInformation = () => {
   if (GameData && GameData.singleGame.isEarlyAccess != null) {
     // clean up the GameData object a little.
     const drilledGameData = GameData.singleGame;
+    const timeSinceRelease = timeSince(
+      Date.parse(drilledGameData.release_date)
+    );
+
+    const earlyAccessStatus = (earlyAccess, releaseDate) => {
+      let seconds = Math.floor((new Date() - releaseDate) / 1000);
+      if (!earlyAccess) return "⭐Completed release⭐";
+      if (seconds < 31536000) return "Less than a year in early access!";
+      if (seconds < 63072000) return "Two years in EA...";
+      if (seconds < 157680000) return "😳Long term early access😳";
+      else return "💀Eternally early access💀";
+    };
 
     return (
       <div>
         <h3>Search results go here</h3>
         <p>Results for Game ID: {gameId}</p>
         <span className="text-primary">
-          Name: {drilledGameData.name} <br />
-          Steam_appid: {drilledGameData.steam_appid} <br />
-          developer: {drilledGameData.developer} <br />
-          publisher: {drilledGameData.publisher} <br />
-          isEarlyAccess: {drilledGameData.isEarlyAccess.toString()} <br />
-          release_date: {drilledGameData.release_date} <br />
-          time since release: {timeSince(Date.parse(drilledGameData.release_date))} <br/>
+          {drilledGameData.name} <br />
+          {earlyAccessStatus(
+            drilledGameData.isEarlyAccess,
+            Date.parse(drilledGameData.release_date)
+          )}{" "}
+          <br />
+          Release date: {drilledGameData.release_date} <br />
+          Time since release: {timeSinceRelease} <br />
+          Developer: {drilledGameData.developer} <br />
+          Publisher: {drilledGameData.publisher} <br />
         </span>
-        release_date: {Date.parse(drilledGameData.release_date)} <br />
       </div>
     );
-  };
+  }
   // if there is no GameData or we received a null in isEarlyAccess, we provide a boilerplate response.
   return (
     <div>
