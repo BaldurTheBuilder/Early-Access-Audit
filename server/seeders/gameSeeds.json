@@ -1,18 +1,80 @@
 [
-    {
-        "gameTitle": "asdf",
-        "appId": 1
-    },
-    {
-        "gameTitle": "ghjk",
-        "appId": 2
-    },
-    {
-        "gameTitle": "qwer",
-        "appId": 3
-    },
-    {
-        "gameTitle": "tyui",
-        "appId": 4
-    }
+{
+    "name": "Made up current EA game 1",
+    "steam_appid": 1,
+    "developer": "Developed by Jack 1",
+    "publisher": "Published by Jack 1",
+    "isEarlyAccess": true,
+    "everEarlyAccess": true,
+    "originalRelease": "1 Jan 2024",
+    "updatedRelease": "1 Jan 2024",
+    "lastUpdate": "1 Jan 2024",
+    "totalFunding": 1000,
+    "earlyAccessFunding": 1000
+},
+{
+    "name": "Made up current EA game 2",
+    "steam_appid": 2,
+    "developer": "Developed by Jerry 2",
+    "publisher": "Published by Jerry 2",
+    "isEarlyAccess": true,
+    "everEarlyAccess": true,
+    "originalRelease": "2 Jan 2024",
+    "updatedRelease": "2 Jan 2024",
+    "lastUpdate": "2 Jan 2024",
+    "totalFunding": 1500,
+    "earlyAccessFunding": 1500
+},
+{
+    "name": "Made up former EA game 1",
+    "steam_appid": 3,
+    "developer": "Developed by John 3",
+    "publisher": "Published by John 3",
+    "isEarlyAccess": false,
+    "everEarlyAccess": true,
+    "originalRelease": "3 Jan 2024",
+    "updatedRelease": "3 Jan 2024",
+    "lastUpdate": "3 Jan 2024",
+    "totalFunding": 2000,
+    "earlyAccessFunding": 1000
+},
+{
+    "name": "Made up former EA game 2",
+    "steam_appid": 4,
+    "developer": "Developed by Jacob 4",
+    "publisher": "Published by Jacob 4",
+    "isEarlyAccess": false,
+    "everEarlyAccess": true,
+    "originalRelease": "4 Jan 2024",
+    "updatedRelease": "4 Jan 2024",
+    "lastUpdate": "4 Jan 2024",
+    "totalFunding": 3000,
+    "earlyAccessFunding": 1500
+},
+{
+    "name": "Made up never EA game 1",
+    "steam_appid": 5,
+    "developer": "Developed by Joseph 5",
+    "publisher": "Published by Joseph 5",
+    "isEarlyAccess": false,
+    "everEarlyAccess": false,
+    "originalRelease": "5 Jan 2024",
+    "updatedRelease": "5 Jan 2024",
+    "lastUpdate": "5 Jan 2024",
+    "totalFunding": 55000,
+    "earlyAccessFunding": 0
+},
+{
+    "name": "Made up never EA game 2",
+    "steam_appid": 6,
+    "developer": "Developed by Jenna 6",
+    "publisher": "Published by Jenna 6",
+    "isEarlyAccess": false,
+    "everEarlyAccess": false,
+    "originalRelease": "6 Jan 2024",
+    "updatedRelease": "6 Jan 2024",
+    "lastUpdate": "6 Jan 2024",
+    "totalFunding": 1900,
+    "earlyAccessFunding": 0
+}
 ]

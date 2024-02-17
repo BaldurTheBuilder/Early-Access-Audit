@@ -3,8 +3,6 @@ import {useGameSearchContext} from '../../context/GlobalState';
 
 // import '../../styles/Header.css';
 
-
-
 const SearchBar = () => {
   const {handleSearch} = useGameSearchContext();
   const [search, setSearch] = useState("");
@@ -18,8 +16,6 @@ const SearchBar = () => {
     handleSearch(search);
   }
 
-
-
   return (
     <>
       <h1>Search Bar</h1>
@@ -30,7 +26,6 @@ const SearchBar = () => {
       <div className="form-group">
         <form className="form" onSubmit={handleSubmit}>
           <div className="field">
-            <label style={{ marginRight: '5px' }}>Retrieve GitHub Issues</label>
             <input
               type="text"
               value={search}

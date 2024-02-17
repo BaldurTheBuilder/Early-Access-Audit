@@ -5,6 +5,7 @@ import { GameSearchProvider } from "../context/GlobalState";
 
 import GameInformation from "../components/GameInformation";
 import SearchBar from "../components/SearchBar";
+import MyApiGameInformation from "../components/MyApiGameInformation";
 import profilePicture from "../assets/profilePicture.jpg";
 
 export default function Home() {
@@ -22,6 +23,7 @@ export default function Home() {
             {/*We need to have two components: a search bar, and a game information component. */}
             <SearchBar />
             <GameInformation/>
+            <MyApiGameInformation/>
           </GameSearchProvider>
         </div>
       </div>

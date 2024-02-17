@@ -11,7 +11,7 @@ const GameSearchProvider = ({ children }) => {
   const steam_appid = 0;
   const gameData = {
     steam_appid: 0,
-    gameTitle: "",
+    name: "",
     developer: "",
     publisher: "",
     genres: [],
@@ -20,7 +20,6 @@ const GameSearchProvider = ({ children }) => {
 
   const handleSearch = (search) => {
     console.log(`handleSearch called with: ${search}.`);
-
     setGameId(Number(search));
   };
 
