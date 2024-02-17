@@ -76,5 +76,14 @@
     "lastUpdate": "6 Jan 2024",
     "totalFunding": 1900,
     "earlyAccessFunding": 0
+},
+{
+    "name": "FILLER 500",
+    "steam_appid": 500,
+    "developer": "FILLER DEV",
+    "publisher": "FILLER PUBLISHER",
+    "isEarlyAccess": true,
+    "everEarlyAccess": true,
+    "originalRelease": "6 Jan 1999"
 }
 ]

@@ -13,7 +13,14 @@ const PORT = process.env.PORT || 3001;
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: authMiddleware,
+  context: ({ authMiddleware }) => {
+    // You can include any necessary objects/functions in your context
+    return {
+      // Assuming Game is imported from your data models
+      Game: require('./models/Game'),
+      resolvers: resolvers,
+    };
+  },
 });
 
 app.use(express.urlencoded({ extended: true }));

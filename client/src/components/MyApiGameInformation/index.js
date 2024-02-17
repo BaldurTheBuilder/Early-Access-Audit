@@ -76,7 +76,7 @@ const MyApiGameInformation = () => {
             drilledGameData.isEarlyAccess,
             Date.parse(dateifiedReleaseDate)
           )}{" "}
-          <br />
+          <br />{typeof(drilledGameData.originalRelease)}
           Release date: {dateifiedReleaseDate.toDateString()}<br />
           Time since release: {timeSinceRelease} <br />
           Developer: {drilledGameData.developer} <br />

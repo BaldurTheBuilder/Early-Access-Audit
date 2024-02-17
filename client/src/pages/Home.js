@@ -1,12 +1,9 @@
-import React, { useState } from "react";
-import { useQuery } from "@apollo/client";
-import { QUERY_SINGLE_GAME, QUERY_GAMES } from "../api/queries";
+import React from "react";
 import { GameSearchProvider } from "../context/GlobalState";
 
 import GameInformation from "../components/GameInformation";
 import SearchBar from "../components/SearchBar";
 import MyApiGameInformation from "../components/MyApiGameInformation";
-import profilePicture from "../assets/profilePicture.jpg";
 
 export default function Home() {
   return (
@@ -30,7 +27,3 @@ export default function Home() {
     </div>
   );
 }
-
-// right now this isn't working. I have a few options for how to pass the value between the components:
-// 1) figure out context api.
-// 2) use useParams() and put the game information as a variable in the route URL.

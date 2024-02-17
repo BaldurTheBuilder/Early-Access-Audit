@@ -33,19 +33,8 @@ const typeDefs = gql`
 
   type Mutation {
     updateGame(steam_appid: Int!): Game
-    addGame(
-      name: String
-      isEarlyAccess: Boolean
-      everEarlyAccess: Boolean
-      originalRelease: String
-      updatedRelease: String
-      lastUpdate: String
-      developer: String
-      publisher: String
-      steam_appid: Int
-      totalFunding: Int
-      earlyAccessFunding: Int
-    ): Game
+    addGame(steam_appid: Int!): Game
+    processGame(steam_appid: Int!): Game
   }
 `;
 
