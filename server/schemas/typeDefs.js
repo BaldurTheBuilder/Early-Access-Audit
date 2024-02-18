@@ -3,44 +3,39 @@ const { gql } = require("apollo-server-express");
 const typeDefs = gql`
   type Game {
     _id: ID
-    earlyAccessCurrent: Boolean
-    earlyAccessEver: Boolean
+    name: String
+    isEarlyAccess: Boolean
+    everEarlyAccess: Boolean
     originalRelease: String
     updatedRelease: String
     lastUpdate: String
-    gameTitle: String
     developer: String
     publisher: String
-    appId: Int
+    steam_appid: Int
     totalFunding: Int
     earlyAccessFunding: Int
   }
+
   type SteamGame {
     name: String
     steam_appid: Int
+    developer: String
+    publisher: String
+    isEarlyAccess: Boolean
+    release_date: String
   }
 
   type Query {
-    # users: [User]!
     games: [Game]!
-    # unclaimedTasks: [Task]
-    singleGame(steam_appid: Int!): SteamGame
+    singleSteamGame(steam_appid: Int!): SteamGame
+    singleApiGame(steam_appid: Int!): Game
   }
 
-  # type Auth {
-  #   token: ID!
-  #   user: User
-  # }
-
-  # type Mutation {
-  #   addGame(appId: String!, ): Game
-  #   updateGame(): Game
-
-  #   updateImage(projectTitle: String!, image: String!): Project
-  #   # addUser(username: String!, email: String!, password: String!, firstName: String!): Auth
-  #   # login(email: String!, password: String!): Auth
-  #   # addTask(taskName: String!, description: String!): Task
-  # }
+  type Mutation {
+    updateGame(steam_appid: Int!): Game
+    addGame(steam_appid: Int!): Game
+    processGame(steam_appid: Int!): Game
+  }
 `;
 
 module.exports = typeDefs;

@@ -1,12 +1,12 @@
 const { Schema, model } = require("mongoose");
 
 const gameSchema = new Schema({
-  gameTitle: {
+  name: {
     type: String,
-    required: "Your game needs a title!",
+    required: "Your game needs a name!",
     unique: true,
   },
-  appId: {
+  steam_appid: {
     type: Number,
     required:
       "We need to know the game's ID to see if it's already been queried.",
@@ -35,10 +35,10 @@ const gameSchema = new Schema({
   earlyAccessFunding: {
     type: Number,
   },
-  earlyAccessCurrent: {
+  isEarlyAccess: {
     type: Boolean,
   },
-  earlyAccessEver: {
+  everEarlyAccess: {
     type: Boolean,
   }
 });

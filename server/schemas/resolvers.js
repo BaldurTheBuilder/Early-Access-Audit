@@ -1,115 +1,262 @@
-const { AuthenticationError } = require("apollo-server-express");
-const axios = require('axios');
-const { User, Game } = require("../models");
-// maybe change auth.js to index.js for simple imports
-const { signToken } = require("../auth/auth");
+const axios = require("axios");
+const { Game } = require("../models");
 
 const resolvers = {
   Query: {
     games: async () => {
       return Game.find();
     },
-    singleGame: async (parent, { steam_appid }) => {
-      const response = await axios.get(`https://store.steampowered.com/api/appdetails?appids=${steam_appid}`);
-      if(!response.data[steam_appid].success) return 0;
-      
+    singleSteamGame: async (parent, { steam_appid }, context) => {
+      if (steam_appid === "") return {};
+
+      const response = await axios.get(
+        `https://store.steampowered.com/api/appdetails?appids=${steam_appid}`
+      );
+      if (!response.data[steam_appid].success) return 0;
       const gameData = response.data[steam_appid].data;
+
+      let isEarlyAccess = false;
+      for (let index = 0; index < gameData.genres.length; index++) {
+        if (gameData.genres[index].description == "Early Access") {
+          isEarlyAccess = true;
+          break;
+        }
+      }
+
       return {
         name: gameData.name,
-        steam_appid: gameData.steam_appid
+        steam_appid: gameData.steam_appid,
+        developer: gameData.developers[0],
+        publisher: gameData.publishers[0],
+        isEarlyAccess: isEarlyAccess,
+        release_date: gameData.release_date.date,
       };
-      // let ourGame = Game.find({ steam_appid: steam_appid });
-      // if(ourGame) return ourGame;
-
-            // if we have the game logged already
-      // if (ourGame) {
-      //   // if the game doesn't have the early access tag, return game
-      //   // if the game does have the early access tag, run mutation
-      //   // temporarily: just send it back if there's a game
-      //   return ourGame;
-      // }
-      // // if we don't have the game logged already
-      // else {
-        // call the steam API to see if the game exists
-        // if it exists, create a log of the game's information with a mutation
-        // temporarily: just return the steam api game
-        // const FetchSteam = async () => {
-        //   let fetchingURL = `https://store.steampowered.com/api/appdetails?appids=${steam_appid}`;
-        //   const response = await fetch(fetchingURL);
-        //   const data = await response.json();
-        //   let ourObject = {
-        //     name: data.name,
-        //     steam_appid: data.steam_appid
-        //   }
-        //   return ourObject;
-        // }
-        // return FetchSteam();
-      // }
     },
 
-    // users: async () => {
-    //   return User.find()
-    //   .populate('createdTasks')
-    // },
-    // user: async (parent, {userId}) => {
-    //   return User.find({_id: userId})
-    //   .populate('createdTasks')
-    // },
-
-    // unclaimedTasks: async () => {
-    //   const params = {assignedUser: null};
-    //   return Task.find(params);
-    // },
+    singleApiGame: async (parent, { steam_appid }, context) => {
+      if (steam_appid === "") return {};
+      return Game.findOne({ steam_appid: steam_appid });
+    },
   },
-  // Mutation: {
-  //not using context to check whether we're logged in yet
-  // updateImage: async (parent, {gameTitle, image}) => {
-  //   return await Project.findOneAndUpdate(
-  //     {projectTitle: projectTitle},
-  //     {image},
-  //     {new: true}
-  //     );
+  Mutation: {
+    updateGame: async (parent, { steam_appid }, context) => {
+      // look to confirm there's a game to update that hasn't been updated in at least 7 days
+      let searchedApiGame = await context.resolvers.Query.singleApiGame(
+        parent,
+        { steam_appid },
+        context
+      );
+      if (
+        !searchedApiGame ||
+        Date.parse(searchedApiGame.lastUpdate) > Date.now() - 604800000
+      )
+        return {
+          name: searchedApiGame.name,
+          isEarlyAccess: searchedApiGame.isEarlyAccess,
+          // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+          updatedRelease: searchedApiGame.release_date,
+          lastUpdate: Date.now(),
+          developer: searchedApiGame.developer,
+          publisher: searchedApiGame.publisher,
+          steam_appid: steam_appid,
+          // totalFunding: searchedSteamGame.totalFunding,
+          // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+        };
 
-  //   }
-  //   addUser: async (parent, { username, email, password, firstName }) => {
-  //     const user = await User.create({ username, email, password, firstName });
-  //     const token = signToken(user);
-  //     return { token, user };
-  //   },
-  //   login: async (parent, { email, password }) => {
-  //     const user = await User.findOne({ email });
+      // use our query to see if there's a game at the requested app_id
+      let searchedSteamGame = await context.resolvers.Query.singleSteamGame(
+        parent,
+        { steam_appid },
+        context
+      );
+      if (!searchedSteamGame)
+        return { name: "no data in steam for this appid" };
 
-  //     if (!user) {
-  //       throw new AuthenticationError('No user found with this email address');
-  //     }
+      await Game.findOneAndUpdate(
+        { steam_appid: steam_appid },
+        {
+          name: searchedSteamGame.name,
+          isEarlyAccess: searchedSteamGame.isEarlyAccess,
+          // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+          updatedRelease: searchedSteamGame.release_date,
+          lastUpdate: Date.now(),
+          developer: searchedSteamGame.developer,
+          publisher: searchedSteamGame.publisher,
+          steam_appid: steam_appid,
+          // totalFunding: searchedSteamGame.totalFunding,
+          // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+        }
+      );
+      return {
+        name: searchedSteamGame.name,
+        isEarlyAccess: searchedSteamGame.isEarlyAccess,
+        // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+        updatedRelease: searchedSteamGame.release_date,
+        lastUpdate: Date.now(),
+        developer: searchedSteamGame.developer,
+        publisher: searchedSteamGame.publisher,
+        steam_appid: steam_appid,
+        // totalFunding: searchedSteamGame.totalFunding,
+        // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+      };
+    },
 
-  //     const correctPw = await user.isCorrectPassword(password);
+    // check the api for the game's existence.
+    addGame: async (parent, { steam_appid }, context) => {
+      // look to confirm there's a game to update that hasn't been updated in at least 7 days
+      let searchedApiGame = await context.resolvers.Query.singleApiGame(
+        parent,
+        { steam_appid },
+        context
+      );
+      if (searchedApiGame)
+        return { name: "There's a game with this ID already." };
 
-  //     if (!correctPw) {
-  //       throw new AuthenticationError('Incorrect credentials');
-  //     }
+      // use our query to see if there's a game at the requested app_id
+      let searchedSteamGame = await context.resolvers.Query.singleSteamGame(
+        parent,
+        { steam_appid },
+        context
+      );
+      if (!searchedSteamGame) return { name: "no steam game at this appid" };
+      let dateToUse = 0;
+      if(searchedSteamGame.release_date != "Coming soon" ) dateToUse = searchedSteamGame.release_date;
 
-  //     const token = signToken(user);
+      await Game.create(
+        { steam_appid: steam_appid },
+        {
+          name: searchedSteamGame.name,
+          isEarlyAccess: searchedSteamGame.isEarlyAccess,
+          // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+          updatedRelease: 1,
+          lastUpdate: Date.now(),
+          developer: searchedSteamGame.developer,
+          publisher: searchedSteamGame.publisher,
+          steam_appid: steam_appid,
+          // totalFunding: searchedSteamGame.totalFunding,
+          // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+        }
+      );
+      return {
+        name: searchedSteamGame.name,
+        isEarlyAccess: searchedSteamGame.isEarlyAccess,
+        // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+        updatedRelease: searchedSteamGame.release_date,
+        lastUpdate: Date.now(),
+        developer: searchedSteamGame.developer,
+        publisher: searchedSteamGame.publisher,
+        steam_appid: steam_appid,
+        // totalFunding: searchedSteamGame.totalFunding,
+        // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+      };
+    },
 
-  //     return { token, user };
-  //   },
-  //   addTask: async (parent, { taskName, description }, context) => {
-  //     if(context.user) {
-  //       const task = await Task.create({
-  //         taskName,
-  //         description,
-  //         taskAuthor: context.user.username
-  //       });
+    // combine queries and mutations to process a searched game.
+    processGame: async (parent, { steam_appid }, context) => {
+      let ourApiHasIt = false;
+      // api search
+      // look to confirm there's a game to update that hasn't been updated in at least 7 days
+      let searchedApiGame = await context.resolvers.Query.singleApiGame(
+        parent,
+        { steam_appid },
+        context
+      );
 
-  //       await User.findOneAndUpdated(
-  //         { _id: context.user._id },
-  //         { $pull: { createdTasks: task._id }}
-  //       );
+      // if the game exists and isn't early access, or is early access and has been updated within 7 days, return that.
+      if (
+        searchedApiGame &&
+        (!searchedApiGame.isEarlyAccess ||
+          Date.parse(searchedApiGame.lastUpdate) > Date.now() - 604800000)
+      ) {
+        return {
+          name: searchedApiGame.name,
+          isEarlyAccess: searchedApiGame.isEarlyAccess,
+          // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+          updatedRelease: searchedApiGame.release_date,
+          lastUpdate: Date.now(),
+          developer: searchedApiGame.developer,
+          publisher: searchedApiGame.publisher,
+          steam_appid: steam_appid,
+          // totalFunding: searchedSteamGame.totalFunding,
+          // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+        };
+      } else if (searchedApiGame) ourApiHasIt = true;
 
-  //       return task;
-  //     }
-  //   }
-  // },
+      // steam API search
+      let searchedSteamGame = await context.resolvers.Query.singleSteamGame(
+        parent,
+        { steam_appid },
+        context
+      );
+
+      // if the steam game exists and our API is empty there, use addGame
+      if (searchedSteamGame && !ourApiHasIt) {
+        let dateToUse = 0;
+        if(searchedSteamGame.release_date != "Coming soon" ) dateToUse = searchedSteamGame.release_date;
+
+        await Game.create(
+          {
+            name: searchedSteamGame.name,
+            isEarlyAccess: searchedSteamGame.isEarlyAccess,
+            // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+            updatedRelease: dateToUse,
+            lastUpdate: Date.now(),
+            developer: searchedSteamGame.developer,
+            publisher: searchedSteamGame.publisher,
+            steam_appid: steam_appid,
+            // totalFunding: searchedSteamGame.totalFunding,
+            // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+          }
+        );
+        return {
+          name: searchedSteamGame.name,
+          isEarlyAccess: searchedSteamGame.isEarlyAccess,
+          // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+          updatedRelease: dateToUse,
+          lastUpdate: Date.now(),
+          developer: searchedSteamGame.developer,
+          publisher: searchedSteamGame.publisher,
+          steam_appid: steam_appid,
+          originalRelease: searchedSteamGame.release_date
+          // totalFunding: searchedSteamGame.totalFunding,
+          // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+        };
+      }
+
+      // if the game exists and our API has a game, use updateGame
+      if (searchedSteamGame && ourApiHasIt) {
+        await Game.findOneAndUpdate(
+          { steam_appid: steam_appid },
+          {
+            name: searchedSteamGame.name,
+            isEarlyAccess: searchedSteamGame.isEarlyAccess,
+            // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+            updatedRelease: searchedSteamGame.release_date,
+            lastUpdate: Date.now(),
+            developer: searchedSteamGame.developer,
+            publisher: searchedSteamGame.publisher,
+            steam_appid: steam_appid,
+            // totalFunding: searchedSteamGame.totalFunding,
+            // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+          }
+        );
+        return {
+          name: searchedSteamGame.name,
+          isEarlyAccess: searchedSteamGame.isEarlyAccess,
+          // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+          updatedRelease: searchedSteamGame.release_date,
+          lastUpdate: Date.now(),
+          developer: searchedSteamGame.developer,
+          publisher: searchedSteamGame.publisher,
+          steam_appid: steam_appid,
+          // totalFunding: searchedSteamGame.totalFunding,
+          // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+        };
+      }
+
+      return { name: "Error: No game is logged with this ID." };
+    },
+  },
 };
 
 module.exports = resolvers;
