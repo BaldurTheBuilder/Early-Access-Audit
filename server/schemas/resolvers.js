@@ -119,6 +119,8 @@ const resolvers = {
         context
       );
       if (!searchedSteamGame) return { name: "no steam game at this appid" };
+      let dateToUse = 0;
+      if(searchedSteamGame.release_date != "Coming soon" ) dateToUse = searchedSteamGame.release_date;
 
       await Game.create(
         { steam_appid: steam_appid },
@@ -126,7 +128,7 @@ const resolvers = {
           name: searchedSteamGame.name,
           isEarlyAccess: searchedSteamGame.isEarlyAccess,
           // everEarlyAccess: searchedSteamGame.everEarlyAccess,
-          updatedRelease: searchedSteamGame.release_date,
+          updatedRelease: 1,
           lastUpdate: Date.now(),
           developer: searchedSteamGame.developer,
           publisher: searchedSteamGame.publisher,
@@ -159,12 +161,13 @@ const resolvers = {
         { steam_appid },
         context
       );
+
       // if the game exists and isn't early access, or is early access and has been updated within 7 days, return that.
       if (
         searchedApiGame &&
         (!searchedApiGame.isEarlyAccess ||
           Date.parse(searchedApiGame.lastUpdate) > Date.now() - 604800000)
-      )
+      ) {
         return {
           name: searchedApiGame.name,
           isEarlyAccess: searchedApiGame.isEarlyAccess,
@@ -177,7 +180,7 @@ const resolvers = {
           // totalFunding: searchedSteamGame.totalFunding,
           // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
         };
-      else if (searchedApiGame) ourApiHasIt = true;
+      } else if (searchedApiGame) ourApiHasIt = true;
 
       // steam API search
       let searchedSteamGame = await context.resolvers.Query.singleSteamGame(
@@ -188,13 +191,15 @@ const resolvers = {
 
       // if the steam game exists and our API is empty there, use addGame
       if (searchedSteamGame && !ourApiHasIt) {
+        let dateToUse = 0;
+        if(searchedSteamGame.release_date != "Coming soon" ) dateToUse = searchedSteamGame.release_date;
+
         await Game.create(
-          { steam_appid: steam_appid },
           {
             name: searchedSteamGame.name,
             isEarlyAccess: searchedSteamGame.isEarlyAccess,
             // everEarlyAccess: searchedSteamGame.everEarlyAccess,
-            updatedRelease: searchedSteamGame.release_date,
+            updatedRelease: dateToUse,
             lastUpdate: Date.now(),
             developer: searchedSteamGame.developer,
             publisher: searchedSteamGame.publisher,
@@ -207,7 +212,7 @@ const resolvers = {
           name: searchedSteamGame.name,
           isEarlyAccess: searchedSteamGame.isEarlyAccess,
           // everEarlyAccess: searchedSteamGame.everEarlyAccess,
-          updatedRelease: searchedSteamGame.release_date,
+          updatedRelease: dateToUse,
           lastUpdate: Date.now(),
           developer: searchedSteamGame.developer,
           publisher: searchedSteamGame.publisher,
@@ -248,7 +253,7 @@ const resolvers = {
         };
       }
 
-      return {name: "Error: No game is logged with this ID."};
+      return { name: "Error: No game is logged with this ID." };
     },
   },
 };

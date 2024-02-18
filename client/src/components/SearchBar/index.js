@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import {useGameSearchContext} from '../../context/GlobalState';
+import { useQuery, useMutation } from "@apollo/client";
+import { PROCESS_GAME_SEARCH } from "../../api/mutations";
 
 // import '../../styles/Header.css';
 
 const SearchBar = () => {
   const {handleSearch} = useGameSearchContext();
   const [search, setSearch] = useState("");
+
+  const [processSearch] = useMutation(PROCESS_GAME_SEARCH);
 
   const handleChange = (e) => {
     setSearch(e.target.value);
@@ -14,7 +18,11 @@ const SearchBar = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleSearch(search);
-  }
+    processSearch({
+      variables: { steam_appid: Number(search) }
+  })
+  };
+
 
   return (
     <>
