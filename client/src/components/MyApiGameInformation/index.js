@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
-import { useQuery } from "@apollo/client";
-import "../../styles/dark-theme.css"
+import { useQuery, useMutation } from "@apollo/client";
+import "../../styles/dark-theme.css";
 
 import { useGameSearchContext } from "../../context/GlobalState";
 
 import { QUERY_SINGLE_API_GAME, QUERY_GAMES } from "../../api/queries";
+import { PROCESS_GAME_SEARCH } from "../../api/mutations";
 
 // accept a unix timecode and return the time since then as a string.
 function timeSince(date) {
@@ -55,8 +56,7 @@ const MyApiGameInformation = () => {
     const drilledGameData = GameData.singleApiGame;
     const numberifiedReleaseDate = Number(drilledGameData.originalRelease);
     const dateifiedReleaseDate = new Date(numberifiedReleaseDate);
-    const timeSinceRelease = timeSince(numberifiedReleaseDate
-    );
+    const timeSinceRelease = timeSince(numberifiedReleaseDate);
 
     const earlyAccessStatus = (earlyAccess, releaseDate) => {
       let seconds = Math.floor((new Date() - releaseDate) / 1000);
@@ -76,8 +76,10 @@ const MyApiGameInformation = () => {
             drilledGameData.isEarlyAccess,
             Date.parse(dateifiedReleaseDate)
           )}{" "}
-          <br />{typeof(drilledGameData.originalRelease)}
-          Release date: {dateifiedReleaseDate.toDateString()}<br />
+          <br />
+          {typeof drilledGameData.originalRelease}
+          Release date: {dateifiedReleaseDate.toDateString()}
+          <br />
           Time since release: {timeSinceRelease} <br />
           Developer: {drilledGameData.developer} <br />
           Publisher: {drilledGameData.publisher} <br />

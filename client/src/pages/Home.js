@@ -19,7 +19,6 @@ export default function Home() {
           <GameSearchProvider>
             {/*We need to have two components: a search bar, and a game information component. */}
             <SearchBar />
-            <GameInformation/>
             <MyApiGameInformation/>
           </GameSearchProvider>
         </div>
