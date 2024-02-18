@@ -217,6 +217,7 @@ const resolvers = {
           developer: searchedSteamGame.developer,
           publisher: searchedSteamGame.publisher,
           steam_appid: steam_appid,
+          originalRelease: searchedSteamGame.release_date
           // totalFunding: searchedSteamGame.totalFunding,
           // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
         };

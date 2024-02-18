@@ -6,7 +6,7 @@ const useGameSearchContext = () => useContext(GameSearchContext);
 
 // GameSearchProvider to hold initial state, return provider component
 const GameSearchProvider = ({ children }) => {
-  const [gameId, setGameId] = useState("");
+  const [gameId, setGameId] = useState(0);
 
   const steam_appid = 0;
   const gameData = {

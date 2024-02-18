@@ -19,8 +19,15 @@ const SearchBar = () => {
     e.preventDefault();
     handleSearch(search);
     processSearch({
-      variables: { steam_appid: Number(search) }
+      variables: { steam_appid: Number(search)}
   })
+  .then((result) => {
+    console.log('Mutation result:', result);
+    // Handle successful response here
+  }).catch((error) => {
+    console.error('Mutation error:', error);
+    // Handle error response here
+  });
   };
 
 

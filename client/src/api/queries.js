@@ -13,8 +13,8 @@ export const QUERY_GAMES = gql`
       publisher
       totalFunding
       earlyAccessFunding
-      earlyAccessCurrent
-      earlyAccessEver
+      isEarlyAccess
+      everEarlyAccess
     }
   }
 `;
