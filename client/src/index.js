@@ -109,4 +109,10 @@ What I need to find a way to get information on:
     -if reformed, when it was originally early access
 
 
+
+    to do
+    1) repair date gathering
+    2) move most data manipulation to the resolver
+    3) clean up the resolver
+    4) 
 */

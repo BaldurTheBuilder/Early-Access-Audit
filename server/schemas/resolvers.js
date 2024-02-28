@@ -10,7 +10,7 @@ const resolvers = {
       if (steam_appid === "") return {};
 
       const response = await axios.get(
-        `https://store.steampowered.com/api/appdetails?appids=${steam_appid}`
+        `https://store.steampowered.com/api/appdetails?appids=${steam_appid}&?l=en`
       );
       if (!response.data[steam_appid].success) return 0;
       const gameData = response.data[steam_appid].data;
@@ -171,8 +171,9 @@ const resolvers = {
         return {
           name: searchedApiGame.name,
           isEarlyAccess: searchedApiGame.isEarlyAccess,
+          originalRelease: searchedApiGame.originalRelease,
           // everEarlyAccess: searchedSteamGame.everEarlyAccess,
-          updatedRelease: searchedApiGame.release_date,
+          updatedRelease: searchedApiGame.updatedRelease,
           lastUpdate: Date.now(),
           developer: searchedApiGame.developer,
           publisher: searchedApiGame.publisher,
@@ -192,7 +193,7 @@ const resolvers = {
       // if the steam game exists and our API is empty there, use addGame
       if (searchedSteamGame && !ourApiHasIt) {
         let dateToUse = 0;
-        if(searchedSteamGame.release_date != "Coming soon" ) dateToUse = searchedSteamGame.release_date;
+        if(!isNaN(Date.parse(searchedSteamGame.release_date))) dateToUse = Date.parse(searchedSteamGame.release_date);
 
         await Game.create(
           {
@@ -200,6 +201,7 @@ const resolvers = {
             isEarlyAccess: searchedSteamGame.isEarlyAccess,
             // everEarlyAccess: searchedSteamGame.everEarlyAccess,
             updatedRelease: dateToUse,
+            originalRelease: dateToUse,
             lastUpdate: Date.now(),
             developer: searchedSteamGame.developer,
             publisher: searchedSteamGame.publisher,
@@ -213,6 +215,7 @@ const resolvers = {
           isEarlyAccess: searchedSteamGame.isEarlyAccess,
           // everEarlyAccess: searchedSteamGame.everEarlyAccess,
           updatedRelease: dateToUse,
+          originalRelease: dateToUse,
           lastUpdate: Date.now(),
           developer: searchedSteamGame.developer,
           publisher: searchedSteamGame.publisher,

@@ -22,7 +22,7 @@ const gameSeeds = require('./gameSeeds.json');
 db.once('open', async () => {
     try{
         await Game.deleteMany({});
-        await Game.create(gameSeeds);
+        // await Game.create(gameSeeds);
 
     } catch (err) {
         console.error(err);
