@@ -56,3 +56,13 @@ export const PROCESS_GAME_SEARCH = gql`
     }
   }
 `;
+
+export const CREATE_DEVELOPER = gql`
+  mutation createDeveloper($developerName: String!, $developerGame: Int) {
+    createDeveloper(developerName: $developerName, developerGame: $developergame) {
+      developerName
+      developerGames
+      earlyAccessTrackRecord
+    }
+  }
+`;

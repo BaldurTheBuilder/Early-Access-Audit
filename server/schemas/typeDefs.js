@@ -44,8 +44,8 @@ const typeDefs = gql`
     singleApiGame(steam_appid: Int!): Game
     
     # find the publisher/developer, populate their array of gameIds with the relevant names
-    publisherGames(publisherName: String!): [String]
-    developerGames(developerName: String!): [String]
+    publishedGames(publisherName: String!): Publisher
+    developedGames(developerName: String!): Developer
   }
 
   type Mutation {

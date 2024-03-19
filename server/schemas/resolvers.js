@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { Game } = require("../models");
+const { Game, Publisher, Developer } = require("../models");
 
 const resolvers = {
   Query: {
@@ -36,6 +36,14 @@ const resolvers = {
     singleApiGame: async (parent, { steam_appid }, context) => {
       if (steam_appid === "") return {};
       return Game.findOne({ steam_appid: steam_appid });
+    },
+
+    publishedGames: async (parent, { publisherName }, context) => {
+      return Publisher.findOne({ publisherName: publisherName });
+    },
+
+    developedGames: async (parent, { developerName }, context) => {
+      return Developer.findOne({ developerName: developerName });
     },
   },
   Mutation: {
@@ -120,7 +128,8 @@ const resolvers = {
       );
       if (!searchedSteamGame) return { name: "no steam game at this appid" };
       let dateToUse = 0;
-      if(searchedSteamGame.release_date != "Coming soon" ) dateToUse = searchedSteamGame.release_date;
+      if (searchedSteamGame.release_date != "Coming soon")
+        dateToUse = searchedSteamGame.release_date;
 
       await Game.create(
         { steam_appid: steam_appid },
@@ -193,23 +202,22 @@ const resolvers = {
       // if the steam game exists and our API is empty there, use addGame
       if (searchedSteamGame && !ourApiHasIt) {
         let dateToUse = 0;
-        if(!isNaN(Date.parse(searchedSteamGame.release_date))) dateToUse = Date.parse(searchedSteamGame.release_date);
+        if (!isNaN(Date.parse(searchedSteamGame.release_date)))
+          dateToUse = Date.parse(searchedSteamGame.release_date);
 
-        await Game.create(
-          {
-            name: searchedSteamGame.name,
-            isEarlyAccess: searchedSteamGame.isEarlyAccess,
-            // everEarlyAccess: searchedSteamGame.everEarlyAccess,
-            updatedRelease: dateToUse,
-            originalRelease: dateToUse,
-            lastUpdate: Date.now(),
-            developer: searchedSteamGame.developer,
-            publisher: searchedSteamGame.publisher,
-            steam_appid: steam_appid,
-            // totalFunding: searchedSteamGame.totalFunding,
-            // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
-          }
-        );
+        await Game.create({
+          name: searchedSteamGame.name,
+          isEarlyAccess: searchedSteamGame.isEarlyAccess,
+          // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+          updatedRelease: dateToUse,
+          originalRelease: dateToUse,
+          lastUpdate: Date.now(),
+          developer: searchedSteamGame.developer,
+          publisher: searchedSteamGame.publisher,
+          steam_appid: steam_appid,
+          // totalFunding: searchedSteamGame.totalFunding,
+          // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+        });
         return {
           name: searchedSteamGame.name,
           isEarlyAccess: searchedSteamGame.isEarlyAccess,
@@ -220,7 +228,7 @@ const resolvers = {
           developer: searchedSteamGame.developer,
           publisher: searchedSteamGame.publisher,
           steam_appid: steam_appid,
-          originalRelease: searchedSteamGame.release_date
+          originalRelease: searchedSteamGame.release_date,
           // totalFunding: searchedSteamGame.totalFunding,
           // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
         };
@@ -258,6 +266,29 @@ const resolvers = {
       }
 
       return { name: "Error: No game is logged with this ID." };
+    },
+
+    // add a developer if there isn't one with the name already in existence.
+    createDeveloper: async (parent, { developerName, developerGame }, context) => {
+      // identify whether the developer exists yet.
+      let searchedDeveloper = await context.resolvers.Query.developedGames(
+        parent,
+        { developerName },
+        context
+      );
+      if (searchedDeveloper)
+        return { developerName: "There's a developer with this name already." };
+
+      // create a developer if it doesn't exist yet.
+      await Developer.create( {
+        developerName: developerName,
+        developerGames: [developerGame]}
+
+      );
+      return {
+        developerName: developerName,
+        developerGames: [developerGame]
+      }
     },
   },
 };

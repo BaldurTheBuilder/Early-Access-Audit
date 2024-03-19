@@ -49,3 +49,23 @@ export const QUERY_SINGLE_API_GAME = gql`
     }
   }
 `;
+
+export const QUERY_SINGLE_DEVELOPER = gql`
+  query developedGames($developerName: String!) {
+    developedGames(developerName: $developerName) {
+      developerName
+      developerGames
+      earlyAccessTrackRecord
+    }
+  }
+`;
+
+export const QUERY_SINGLE_PUBLISHER = gql`
+  query publishedGames($publisherName: String!) {
+    publishedGames(publisherName: $publisherName) {
+      publisherName
+      publisherGames
+      earlyAccessTrackRecord
+    }
+  }
+`;

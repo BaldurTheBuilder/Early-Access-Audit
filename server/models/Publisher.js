@@ -4,6 +4,7 @@ const publisherSchema = new Schema({
   publisherName: {
     type: String
   },
+  // array of the ID's of published games
   publisherGames: {
     type: [Number],
   },
