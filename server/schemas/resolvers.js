@@ -268,8 +268,12 @@ const resolvers = {
       return { name: "Error: No game is logged with this ID." };
     },
 
-    // add a developer if there isn't one with the name already in existence.
-    createDeveloper: async (parent, { developerName, developerGame }, context) => {
+    // add a developer if there isn't one yet.
+    createDeveloper: async (
+      parent,
+      { developerName, developerGame },
+      context
+    ) => {
       // identify whether the developer exists yet.
       let searchedDeveloper = await context.resolvers.Query.developedGames(
         parent,
@@ -280,16 +284,68 @@ const resolvers = {
         return { developerName: "There's a developer with this name already." };
 
       // create a developer if it doesn't exist yet.
-      await Developer.create( {
+      await Developer.create({
         developerName: developerName,
-        developerGames: [developerGame]}
-
-      );
+        developerGames: [developerGame],
+      });
       return {
         developerName: developerName,
-        developerGames: [developerGame]
+        developerGames: [developerGame],
+      };
+    },
+
+    // add a publisher if there isn't one yet.
+    createPublisher: async (
+      parent,
+      { publisherName, publisherGame },
+      context
+    ) => {
+      // identify whether the publisher exists yet.
+      let searchedPublisher = await context.resolvers.Query.publishedGames(
+        parent,
+        { publisherName },
+        context
+      );
+      if (searchedPublisher)
+        return { publisherName: "There's a publisher with this name already." };
+
+      // create a publisher if it doesn't exist yet.
+      await Publisher.create({
+        publisherName: publisherName,
+        publisherGames: [publisherGame],
+      });
+      return {
+        publisherName: publisherName,
+        publisherGames: [publisherGame],
+      };
+    },
+
+    // update developer
+    updateDeveloper: async (
+      parent,
+      { developerName, developerGame },
+      context
+    ) => {
+      try {
+        const result = await Developer.findOneAndUpdate(
+          { developerName },
+          { $addToSet: { developerGames: developerGame } }, // Add gameID to developerGames array if not already present
+          { upsert: true, returnDocument: "after" } // Create document if not exists, return the updated document
+        );
+
+        if (result.ok) {
+          console.log("Developer updated successfully.");
+        } else {
+          console.log("Developer not found.");
+        }
+      } catch (error) {
+        console.error("Error updating developer:", error);
       }
     },
+
+    // update publisher
+
+    // ideally, the following mutations will be added: delete developer/publisher/game
   },
 };
 
