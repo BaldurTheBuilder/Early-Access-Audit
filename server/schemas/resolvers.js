@@ -330,7 +330,7 @@ const resolvers = {
         const result = await Developer.findOneAndUpdate(
           { developerName },
           { $addToSet: { developerGames: developerGame } }, // Add gameID to developerGames array if not already present
-          { upsert: true, returnDocument: "after" } // Create document if not exists, return the updated document
+          { returnDocument: "after" } // Create document if not exists, return the updated document
         );
 
         if (result.ok) {
@@ -344,6 +344,27 @@ const resolvers = {
     },
 
     // update publisher
+    updateDeveloper: async (
+      parent,
+      { publisherName, publisherGame },
+      context
+    ) => {
+      try {
+        const result = await Developer.findOneAndUpdate(
+          { publisherName },
+          { $addToSet: { publisherGames: publisherGame } }, // Add gameID to developerGames array if not already present
+          { returnDocument: "after" } // Create document if not exists, return the updated document
+        );
+
+        if (result.ok) {
+          console.log("Developer updated successfully.");
+        } else {
+          console.log("Developer not found.");
+        }
+      } catch (error) {
+        console.error("Error updating developer:", error);
+      }
+    },
 
     // ideally, the following mutations will be added: delete developer/publisher/game
   },
