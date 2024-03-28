@@ -49,7 +49,7 @@ const GameInformation = () => {
   const GameData = GameQuery.data;
 
   // if there is game data and isEarlyAccess isn't null, we know both that the search was successful and that there is a game with the searched ID.
-  if (GameData && GameData.singleSteamGame.isEarlyAccess != null) {
+  if (GameData) {
     // clean up the GameData object a little.
     const drilledGameData = GameData.singleSteamGame;
     const timeSinceRelease = timeSince(

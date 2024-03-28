@@ -15,14 +15,20 @@
 
 require('dotenv').config();
 const db = require("../config/connection");
-const { Game } = require("../models");
+const { Game, Developer, Publisher } = require("../models");
 
 const gameSeeds = require('./gameSeeds.json');
 
 db.once('open', async () => {
     try{
         await Game.deleteMany({});
-        await Game.create(gameSeeds);
+        // await Game.create(gameSeeds);
+
+        await Developer.deleteMany({});
+        // await Developer.create(developerSeeds);
+
+        await Publisher.deleteMany({});
+        // await Publisher.create(publisherSeeds);
 
     } catch (err) {
         console.error(err);

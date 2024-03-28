@@ -42,7 +42,7 @@ function timeSince(date) {
 
 const MyApiGameInformation = () => {
   // gather the game ID from the search bar
-  const { gameId } = useGameSearchContext();
+  const { gameId, gameObject } = useGameSearchContext();
 
   // run the query to collect information
   const GameQuery = useQuery(QUERY_SINGLE_API_GAME, {
@@ -51,9 +51,41 @@ const MyApiGameInformation = () => {
   const GameData = GameQuery.data;
 
   // if there is game data and isEarlyAccess isn't null, we know both that the search was successful and that there is a game with the searched ID.
-  if (GameData && GameData.singleApiGame != null) {
+  if (/*GameData && GameData.singleApiGame != null*/1) {
     // clean up the GameData object a little.
-    const drilledGameData = GameData.singleApiGame;
+    // const drilledGameData = GameData.singleApiGame;
+    // const numberifiedReleaseDate = Number(drilledGameData.originalRelease);
+    // const dateifiedReleaseDate = new Date(numberifiedReleaseDate);
+    // const timeSinceRelease = timeSince(numberifiedReleaseDate);
+
+    // const earlyAccessStatus = (earlyAccess, releaseDate) => {
+    //   let seconds = Math.floor((new Date() - releaseDate) / 1000);
+    //   if (!earlyAccess) return "⭐Completed release⭐";
+    //   if (seconds < 31536000) return "😊Less than a year in early access!😊";
+    //   if (seconds < 63072000) return "Two years in EA...";
+    //   if (seconds < 157680000) return "😳Long term early access😳";
+    //   else return "💀Eternally early access💀";
+    // };
+
+    // return (
+    //   <div>
+    //     <p>API Results for Game ID: {gameId}</p>
+    //     <span className="text-primary">
+    //       {drilledGameData.name} <br />
+    //       {earlyAccessStatus(
+    //         drilledGameData.isEarlyAccess,
+    //         Date.parse(dateifiedReleaseDate)
+    //       )}{" "}
+    //       <br />
+    //       Release date: {dateifiedReleaseDate.toDateString()}
+    //       <br />
+    //       Time since release: {timeSinceRelease} <br />
+    //       Developer: {drilledGameData.developer} <br />
+    //       Publisher: {drilledGameData.publisher} <br />
+    //     </span>
+    //   </div>
+    // );
+    const drilledGameData = gameObject;
     const numberifiedReleaseDate = Number(drilledGameData.originalRelease);
     const dateifiedReleaseDate = new Date(numberifiedReleaseDate);
     const timeSinceRelease = timeSince(numberifiedReleaseDate);
@@ -77,7 +109,6 @@ const MyApiGameInformation = () => {
             Date.parse(dateifiedReleaseDate)
           )}{" "}
           <br />
-          {typeof drilledGameData.originalRelease}
           Release date: {dateifiedReleaseDate.toDateString()}
           <br />
           Time since release: {timeSinceRelease} <br />

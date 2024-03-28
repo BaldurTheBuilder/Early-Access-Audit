@@ -1,5 +1,5 @@
 const axios = require("axios");
-const { Game } = require("../models");
+const { Game, Publisher, Developer } = require("../models");
 
 const resolvers = {
   Query: {
@@ -10,7 +10,7 @@ const resolvers = {
       if (steam_appid === "") return {};
 
       const response = await axios.get(
-        `https://store.steampowered.com/api/appdetails?appids=${steam_appid}`
+        `https://store.steampowered.com/api/appdetails?appids=${steam_appid}&?l=en`
       );
       if (!response.data[steam_appid].success) return 0;
       const gameData = response.data[steam_appid].data;
@@ -36,6 +36,14 @@ const resolvers = {
     singleApiGame: async (parent, { steam_appid }, context) => {
       if (steam_appid === "") return {};
       return Game.findOne({ steam_appid: steam_appid });
+    },
+
+    publishedGames: async (parent, { publisherName }, context) => {
+      return Publisher.findOne({ publisherName: publisherName });
+    },
+
+    developedGames: async (parent, { developerName }, context) => {
+      return Developer.findOne({ developerName: developerName });
     },
   },
   Mutation: {
@@ -120,7 +128,8 @@ const resolvers = {
       );
       if (!searchedSteamGame) return { name: "no steam game at this appid" };
       let dateToUse = 0;
-      if(searchedSteamGame.release_date != "Coming soon" ) dateToUse = searchedSteamGame.release_date;
+      if (searchedSteamGame.release_date != "Coming soon")
+        dateToUse = searchedSteamGame.release_date;
 
       await Game.create(
         { steam_appid: steam_appid },
@@ -171,8 +180,9 @@ const resolvers = {
         return {
           name: searchedApiGame.name,
           isEarlyAccess: searchedApiGame.isEarlyAccess,
+          originalRelease: searchedApiGame.originalRelease,
           // everEarlyAccess: searchedSteamGame.everEarlyAccess,
-          updatedRelease: searchedApiGame.release_date,
+          updatedRelease: searchedApiGame.updatedRelease,
           lastUpdate: Date.now(),
           developer: searchedApiGame.developer,
           publisher: searchedApiGame.publisher,
@@ -192,32 +202,33 @@ const resolvers = {
       // if the steam game exists and our API is empty there, use addGame
       if (searchedSteamGame && !ourApiHasIt) {
         let dateToUse = 0;
-        if(searchedSteamGame.release_date != "Coming soon" ) dateToUse = searchedSteamGame.release_date;
+        if (!isNaN(Date.parse(searchedSteamGame.release_date)))
+          dateToUse = Date.parse(searchedSteamGame.release_date);
 
-        await Game.create(
-          {
-            name: searchedSteamGame.name,
-            isEarlyAccess: searchedSteamGame.isEarlyAccess,
-            // everEarlyAccess: searchedSteamGame.everEarlyAccess,
-            updatedRelease: dateToUse,
-            lastUpdate: Date.now(),
-            developer: searchedSteamGame.developer,
-            publisher: searchedSteamGame.publisher,
-            steam_appid: steam_appid,
-            // totalFunding: searchedSteamGame.totalFunding,
-            // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
-          }
-        );
+        await Game.create({
+          name: searchedSteamGame.name,
+          isEarlyAccess: searchedSteamGame.isEarlyAccess,
+          // everEarlyAccess: searchedSteamGame.everEarlyAccess,
+          updatedRelease: dateToUse,
+          originalRelease: dateToUse,
+          lastUpdate: Date.now(),
+          developer: searchedSteamGame.developer,
+          publisher: searchedSteamGame.publisher,
+          steam_appid: steam_appid,
+          // totalFunding: searchedSteamGame.totalFunding,
+          // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
+        });
         return {
           name: searchedSteamGame.name,
           isEarlyAccess: searchedSteamGame.isEarlyAccess,
           // everEarlyAccess: searchedSteamGame.everEarlyAccess,
           updatedRelease: dateToUse,
+          originalRelease: dateToUse,
           lastUpdate: Date.now(),
           developer: searchedSteamGame.developer,
           publisher: searchedSteamGame.publisher,
           steam_appid: steam_appid,
-          originalRelease: searchedSteamGame.release_date
+          originalRelease: searchedSteamGame.release_date,
           // totalFunding: searchedSteamGame.totalFunding,
           // earlyAccessFunding: searchedSteamGame.earlyAccessFunding
         };
@@ -256,7 +267,107 @@ const resolvers = {
 
       return { name: "Error: No game is logged with this ID." };
     },
+
+    // add a developer if there isn't one yet.
+    createDeveloper: async (
+      parent,
+      { developerName, developerGame },
+      context
+    ) => {
+      // identify whether the developer exists yet.
+      let searchedDeveloper = await context.resolvers.Query.developedGames(
+        parent,
+        { developerName },
+        context
+      );
+      if (searchedDeveloper)
+        return { developerName: "There's a developer with this name already." };
+
+      // create a developer if it doesn't exist yet.
+      await Developer.create({
+        developerName: developerName,
+        developerGames: [developerGame],
+      });
+      return {
+        developerName: developerName,
+        developerGames: [developerGame],
+      };
+    },
+
+    // add a publisher if there isn't one yet.
+    createPublisher: async (
+      parent,
+      { publisherName, publisherGame },
+      context
+    ) => {
+      // identify whether the publisher exists yet.
+      let searchedPublisher = await context.resolvers.Query.publishedGames(
+        parent,
+        { publisherName },
+        context
+      );
+      if (searchedPublisher)
+        return { publisherName: "There's a publisher with this name already." };
+
+      // create a publisher if it doesn't exist yet.
+      await Publisher.create({
+        publisherName: publisherName,
+        publisherGames: [publisherGame],
+      });
+      return {
+        publisherName: publisherName,
+        publisherGames: [publisherGame],
+      };
+    },
+
+    // update developer
+    updateDeveloper: async (
+      parent,
+      { developerName, developerGame },
+      context
+    ) => {
+      try {
+        const result = await Developer.findOneAndUpdate(
+          { developerName },
+          { $addToSet: { developerGames: developerGame } }, // Add gameID to developerGames array if not already present
+          { returnDocument: "after" } // Create document if not exists, return the updated document
+        );
+
+        if (result.ok) {
+          console.log("Developer updated successfully.");
+        } else {
+          console.log("Developer not found.");
+        }
+      } catch (error) {
+        console.error("Error updating developer:", error);
+      }
+    },
+
+    // update publisher
+    updateDeveloper: async (
+      parent,
+      { publisherName, publisherGame },
+      context
+    ) => {
+      try {
+        const result = await Developer.findOneAndUpdate(
+          { publisherName },
+          { $addToSet: { publisherGames: publisherGame } }, // Add gameID to developerGames array if not already present
+          { returnDocument: "after" } // Create document if not exists, return the updated document
+        );
+
+        if (result.ok) {
+          console.log("Developer updated successfully.");
+        } else {
+          console.log("Developer not found.");
+        }
+      } catch (error) {
+        console.error("Error updating developer:", error);
+      }
+    },
+
+    // ideally, the following mutations will be added: delete developer/publisher/game
   },
 };
-
+// test
 module.exports = resolvers;

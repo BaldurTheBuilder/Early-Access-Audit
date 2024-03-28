@@ -6,7 +6,7 @@ import { PROCESS_GAME_SEARCH } from "../../api/mutations";
 // import '../../styles/Header.css';
 
 const SearchBar = () => {
-  const {handleSearch} = useGameSearchContext();
+  const {handleSearch, handleResults } = useGameSearchContext();
   const [search, setSearch] = useState("");
 
   const [processSearch] = useMutation(PROCESS_GAME_SEARCH);
@@ -17,13 +17,17 @@ const SearchBar = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    handleSearch(search);
+    let numberifiedSearch = parseInt(search);
+    console.log(`numberified search is: ${numberifiedSearch}`);
+    if(typeof(numberifiedSearch) !== "number" || numberifiedSearch < 1 || isNaN(numberifiedSearch)) return 0;
+    handleSearch(parseInt(search));
     processSearch({
-      variables: { steam_appid: Number(search)}
+      variables: { steam_appid: parseInt(search)}
   })
   .then((result) => {
     console.log('Mutation result:', result);
     // Handle successful response here
+    handleResults(result.data.processGame);
   }).catch((error) => {
     console.error('Mutation error:', error);
     // Handle error response here

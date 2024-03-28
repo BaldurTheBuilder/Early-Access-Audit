@@ -56,3 +56,43 @@ export const PROCESS_GAME_SEARCH = gql`
     }
   }
 `;
+
+export const CREATE_DEVELOPER = gql`
+  mutation createDeveloper($developerName: String!, $developerGame: Int) {
+    createDeveloper(developerName: $developerName, developerGame: $developergame) {
+      developerName
+      developerGames
+      earlyAccessTrackRecord
+    }
+  }
+`;
+
+export const UPDATE_DEVELOPER = gql`
+  mutation updateDeveloper($developerName: String!, $developerGame: Int!) {
+    updateDeveloper(developerName: $developerName, developerGame: $developergame) {
+      developerName
+      developerGames
+      earlyAccessTrackRecord
+    }
+  }
+`;
+
+export const CREATE_PUBLISHER = gql`
+  mutation createPublisher($publisherName: String!, $publisherGame: Int) {
+    createPublisher(publisherName: $publisherName, publisherGame: $publisherGame) {
+      publisherName
+      publisherGames
+      earlyAccessTrackRecord
+    }
+  }
+`;
+
+export const UPDATE_PUBLISHER = gql`
+  mutation updatePublisher($publisherName: String!, $publisherGame: Int!) {
+    updatePublisher(publisherName: $publisherName, publisherGame: $publisherGame) {
+      publisherName
+      publisherGames
+      earlyAccessTrackRecord
+    }
+  }
+`;
