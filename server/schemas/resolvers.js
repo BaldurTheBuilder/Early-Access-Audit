@@ -369,5 +369,5 @@ const resolvers = {
     // ideally, the following mutations will be added: delete developer/publisher/game
   },
 };
-
+// test
 module.exports = resolvers;
